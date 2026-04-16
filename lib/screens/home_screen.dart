@@ -2,7 +2,6 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/expense_bloc.dart';
-import '../bloc/expense_event.dart';
 import '../bloc/expense_state.dart';
 import '../bottomsheets/quick_add_sheet.dart';
 
