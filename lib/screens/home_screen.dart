@@ -202,7 +202,7 @@ class _HomeScreenState extends State<HomeScreen> {
             margin: const EdgeInsets.only(left: 16),
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: insight.color.withOpacity(0.1),
+              color: insight.color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Row(
