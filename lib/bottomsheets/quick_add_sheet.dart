@@ -11,81 +11,71 @@ class QuickAddSheet extends StatefulWidget {
 }
 
 class _QuickAddSheetState extends State<QuickAddSheet> {
-  String selected = "Food";
-  String amount = "";
+  final amountController = TextEditingController();
+  String selectedCategory = "Food";
 
-  final categories = ["Food", "Travel", "Shopping", "Bills"];
-
-  void addDigit(String digit) {
-    setState(() {
-      amount += digit;
-    });
-  }
+  final categories = ["Food", "Travel", "Bills", "Shopping"];
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return Padding(
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
       child: Container(
         padding: const EdgeInsets.all(16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // 🔹 Amount Display
-            Text(
-              "₹ $amount",
-              style: const TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
+            // Amount Field
+            TextField(
+              controller: amountController,
+              keyboardType: TextInputType.number,
+              style: const TextStyle(fontSize: 24),
+              decoration: const InputDecoration(
+                hintText: "Enter amount ₹",
+                border: InputBorder.none,
               ),
             ),
-      
-            const SizedBox(height: 16),
-      
-            // 🔹 Category Chips
+
+            const SizedBox(height: 10),
+
+            // Category Chips
             Wrap(
               spacing: 8,
               children: categories.map((c) {
                 return ChoiceChip(
                   label: Text(c),
-                  selected: selected == c,
+                  selected: selectedCategory == c,
                   onSelected: (_) {
-                    setState(() => selected = c);
+                    setState(() => selectedCategory = c);
                   },
                 );
               }).toList(),
             ),
-      
-            const SizedBox(height: 16),
-      
-            // 🔢 Number Pad
-            GridView.builder(
-              shrinkWrap: true,
-              itemCount: 9,
-              gridDelegate:
-              const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
+
+            const SizedBox(height: 20),
+
+            // Add Button
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  final amount =
+                      double.tryParse(amountController.text) ?? 0;
+
+                  context.read<ExpenseBloc>().add(
+                    AddExpense(
+                      "Quick Expense",
+                      amount,
+                        selectedCategory
+                    ),
+                  );
+
+                  Navigator.pop(context);
+                },
+                child: const Text("Add Expense"),
               ),
-              itemBuilder: (_, i) {
-                final num = (i + 1).toString();
-                return InkWell(
-                  onTap: () => addDigit(num),
-                  child: Center(child: Text(num, style: const TextStyle(fontSize: 20))),
-                );
-              },
-            ),
-      
-            const SizedBox(height: 10),
-      
-            ElevatedButton(
-              onPressed: () {
-                if (amount.isEmpty) return;
-                context.read<ExpenseBloc>().add(
-                  AddExpense(selected, double.parse(amount)),
-                );
-      
-                Navigator.pop(context);
-              },
-              child: const Text("Add Expense"),
             )
           ],
         ),
