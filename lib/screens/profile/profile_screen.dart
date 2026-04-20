@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:spendwise_flutter/screens/auth/login_screen.dart';
 import 'package:spendwise_flutter/screens/profile/all_expense_screen.dart';
 import '../../bloc/expense_bloc.dart';
 import '../../bloc/expense_state.dart';
@@ -179,6 +180,10 @@ class ProfileScreen extends StatelessWidget {
                       ),
                       onPressed: () async {
                         await FirebaseAuth.instance.signOut();
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (context) => const LoginScreen()),
+                              (Route<dynamic> route) => false,
+                        );
                       },
                     ),
                   ),
