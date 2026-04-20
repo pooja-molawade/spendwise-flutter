@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:spendwise_flutter/extensions/localization_extension.dart';
 
 import '../bloc/expense_bloc.dart';
 import '../bloc/expense_event.dart';
@@ -95,13 +96,14 @@ class _QuickAddSheetState extends State<QuickAddSheet> {
   double amount = 0;
   String selectedCategory = "Food";
 
-  final categories = ["Food", "Travel", "Bills", "Shopping", "EMI"];
 
   final quickAmounts = [50, 100, 200, 500];
   final amountController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    final categories = [context.l10n.food, "Travel", "Bills", "Shopping", "EMI"];
+
     return Container(
       padding: EdgeInsets.only(
         left: 16,

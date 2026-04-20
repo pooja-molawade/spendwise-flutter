@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:spendwise_flutter/extensions/localization_extension.dart';
 
 import '../models/insight.dart';
 
 class InsightService {
-  static List<Insight> generate(List expenses) {
+  static List<Insight> generate(List expenses,BuildContext context) {
     if (expenses.isEmpty) return [];
 
     final List<Insight> insights = [];
@@ -33,7 +34,7 @@ class InsightService {
     insights.add(
       Insight(
         message:
-        "You spent $percent% on ${topCategory.key}",
+            context.l10n.spendingPercentage(topCategory.key, percent),
         icon: Icons.pie_chart,
         color: Colors.blue,
       ),
@@ -52,7 +53,7 @@ class InsightService {
     if (todayTotal > 1000) {
       insights.add(
         Insight(
-          message: "High spending today ₹$todayTotal",
+          message: context.l10n.highSpendingToday(todayTotal),
           icon: Icons.warning,
           color: Colors.red,
         ),
@@ -69,7 +70,7 @@ class InsightService {
     if (lastWeekTotal > 0) {
       insights.add(
         Insight(
-          message: "₹$lastWeekTotal spent in last 7 days",
+          message: context.l10n.last7DaysSpending(lastWeekTotal),
           icon: Icons.trending_up,
           color: Colors.green,
         ),

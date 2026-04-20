@@ -1,7 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:spendwise_flutter/extensions/localization_extension.dart';
 import 'package:spendwise_flutter/screens/profile/analytics_screen.dart';
 import 'package:spendwise_flutter/screens/profile/profile_screen.dart';
 import '../bloc/expense_bloc.dart';
@@ -30,8 +29,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: const Color(0xffF5F7FB),
       appBar: AppBar(
-        title: const Text(
-          'SpendWise',
+        title:  Text(
+          context.l10n.appName,
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
         ),
         backgroundColor: const Color(0xFF6A5AE0),
@@ -70,15 +69,14 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 SizedBox(height: 20,),
                 _balanceCard(total),
-                _sectionTitle("Spending Insights"),
+                _sectionTitle(context.l10n.spendingInsights),
                 _insightsSection(state.expenses),
                 const SizedBox(height: 20),
                 _categoryChips(categorySummary),
                 const SizedBox(height: 10),
                 _analyticsCTA(context),
-                _sectionTitle("Recent Transactions"),
+                _sectionTitle(context.l10n.recentTransactions),
                 Expanded(child: _transactionList(grouped)),
-                //_recentTransactions(state.expenses),
               ],
             );
           },
@@ -97,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         },
         icon: const Icon(Icons.add,color: Colors.white,),
-        label: const Text("Add",style: TextStyle(color: Colors.white),),
+        label:  Text(context.l10n.add,style: TextStyle(color: Colors.white),),
       ),
     );
   }
@@ -116,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         boxShadow: [
           BoxShadow(
-            color: Color(0xFF6A5AE0).withOpacity(0.3),
+            color: Color(0xFF6A5AE0).withValues(alpha: 0.3),
             blurRadius: 12,
             offset: Offset(0, 6),
           )
@@ -125,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text("Total Spent",
+           Text(context.l10n.totalSpent,
               style: TextStyle(color: Colors.white70)),
           const SizedBox(height: 8),
           Text(
@@ -176,7 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _analyticsCTA(BuildContext context) {
     return ListTile(
-      title: const Text("View Analytics"),
+      title: Text(context.l10n.viewAnalytics),
       trailing: const Icon(Icons.arrow_forward_ios, size: 16),
       onTap: () {
         final bloc = context.read<ExpenseBloc>();
@@ -196,7 +194,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _transactionList(Map<String, List> grouped) {
     return ListView(
       shrinkWrap: true,
-      //physics: const NeverScrollableScrollPhysics(),
       children: grouped.entries.map((entry) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -222,62 +219,10 @@ class _HomeScreenState extends State<HomeScreen> {
       }).toList(),
     );
   }
-  
-  Widget _recentTransactions(List expenses) {
-    if (expenses.isEmpty) {
-      return const Expanded(
-        child: Center(
-          child: Text("No expenses yet 😴"),
-        ),
-      );
-    }
-
-    return Expanded(
-      child: ListView.builder(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        itemCount: expenses.length,
-        itemBuilder: (_, i) {
-          final e = expenses[i];
-
-          return Container(
-            margin: const EdgeInsets.only(bottom: 10),
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Row(
-              children: [
-                CircleAvatar(
-                  backgroundColor: Colors.blue.shade50,
-                  child: const Icon(Icons.money, color: Colors.blue),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    e.title,
-                    style: const TextStyle(fontWeight: FontWeight.w500),
-                  ),
-                ),
-                Text(
-                  "₹${e.amount}",
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-  }
 
   Widget _insightsSection(List expenses) {
-    final insights = InsightService.generate(expenses);
-
+    final insights = InsightService.generate(expenses,context);
     if (insights.isEmpty) return const SizedBox();
-
     return SizedBox(
       height: 110,
       child: ListView.builder(
@@ -329,9 +274,9 @@ class _HomeScreenState extends State<HomeScreen> {
       final diff = now.difference(e.date).inDays;
       String key;
       if (diff == 0) {
-        key = "Today";
+        key = context.l10n.today;
       } else if (diff == 1) {
-        key = "Yesterday";
+        key = context.l10n.yesterday;
       } else {
         key = "${e.date.day}/${e.date.month}";
       }

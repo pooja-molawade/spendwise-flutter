@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:spendwise_flutter/extensions/localization_extension.dart';
+import 'package:spendwise_flutter/services/auth_service.dart';
 
-import '../../services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -50,11 +51,11 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() => isLoading = false);
     }
   }
+
   String? validateEmail(String email) {
     if (email.isEmpty) return "Email is required";
 
-    final emailRegex =
-    RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
 
     if (!emailRegex.hasMatch(email)) {
       return "Enter a valid email";
@@ -72,14 +73,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
     return null;
   }
+
   void _showError(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(msg),
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
     );
   }
@@ -90,10 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              Color(0xFF1F2937),
-              Color(0xFF111827),
-            ],
+            colors: [Color(0xFF1F2937), Color(0xFF111827)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -104,11 +101,10 @@ class _LoginScreenState extends State<LoginScreen> {
               padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
-                  const Icon(Icons.account_balance_wallet,
-                      size: 60, color: Colors.white),
+                  const Icon(Icons.account_balance_wallet, size: 60, color: Colors.white),
                   const SizedBox(height: 10),
-                  const Text(
-                    "SpendWise",
+                   Text(
+                   context.l10n.appName,
                     style: TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight.bold,
@@ -123,11 +119,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 15,
-                          offset: Offset(0, 8),
-                        )
+                        BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 15, offset: Offset(0, 8)),
                       ],
                     ),
                     child: Column(
@@ -137,10 +129,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           controller: emailController,
                           decoration: InputDecoration(
                             prefixIcon: Icon(Icons.email),
-                            labelText: "Email",
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
+                            labelText:context.l10n.email,
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                           ),
                         ),
                         const SizedBox(height: 20),
@@ -149,14 +139,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           obscureText: isPasswordHidden,
                           decoration: InputDecoration(
                             prefixIcon: Icon(Icons.lock),
-                            labelText: "Password",
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
+                            labelText: context.l10n.password,
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                             suffixIcon: IconButton(
-                              icon: Icon(
-                                isPasswordHidden ? Icons.visibility_off : Icons.visibility,
-                              ),
+                              icon: Icon(isPasswordHidden ? Icons.visibility_off : Icons.visibility),
                               onPressed: () {
                                 setState(() {
                                   isPasswordHidden = !isPasswordHidden;
@@ -172,41 +158,32 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: ElevatedButton(
                             onPressed: isLoading ? null : _submit,
                             style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                               backgroundColor: Color(0xFF6A11CB),
                               elevation: 5,
                             ),
                             child: isLoading
                                 ? const SizedBox(
-                              height: 22,
-                              width: 22,
-                              child: CircularProgressIndicator(
-                                color: Color(0xFF6A11CB),
-                                strokeWidth: 2,
-                              ),
-                            )
+                                    height: 22,
+                                    width: 22,
+                                    child: CircularProgressIndicator(color: Color(0xFF6A11CB), strokeWidth: 2),
+                                  )
                                 : Text(
-                              isLogin ? "Login" : "Register",
-                              style: TextStyle(fontSize: 16,color: Colors.white),
-                            ),
+                                    isLogin ? context.l10n.login : context.l10n.register,
+                                    style: TextStyle(fontSize: 16, color: Colors.white),
+                                  ),
                           ),
                         ),
                         const SizedBox(height: 10),
                         TextButton(
                           onPressed: () {
                             setState(() {
-                              isLogin=!isLogin;
+                              isLogin = !isLogin;
                               emailController.clear();
                               passwordController.clear();
                             });
                           },
-                          child: Text(
-                            isLogin
-                                ? "Don't have an account? Register"
-                                : "Already have an account? Login",
-                          ),
+                          child: Text(isLogin ? context.l10n.noAccount : context.l10n.haveAccount),
                         ),
                       ],
                     ),

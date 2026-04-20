@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fl_chart/fl_chart.dart';
-
-import '../../bloc/expense_bloc.dart';
-import '../../bloc/expense_state.dart';
+import 'package:spendwise_flutter/bloc/expense_bloc.dart';
+import 'package:spendwise_flutter/bloc/expense_state.dart';
+import 'package:spendwise_flutter/extensions/localization_extension.dart';
 
 class AnalyticsScreen extends StatelessWidget {
   const AnalyticsScreen({super.key});
@@ -13,7 +13,7 @@ class AnalyticsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xffF5F7FB),
       appBar: AppBar(
-        title: const Text("Analytics",
+        title:  Text(context.l10n.analytics,
             style: TextStyle(color: Colors.white)),
         backgroundColor: const Color(0xFF6A5AE0),
         elevation: 0,
@@ -34,7 +34,7 @@ class AnalyticsScreen extends StatelessWidget {
           return Column(
             children: [
               const SizedBox(height: 20),
-              _balanceCard(total),
+              _balanceCard(total,context),
               Expanded(
                 child: Column(
                   children: [
@@ -50,8 +50,7 @@ class AnalyticsScreen extends StatelessWidget {
     );
   }
 
-  // 🔥 Total Spending Card
-  Widget _balanceCard(double total) {
+  Widget _balanceCard(double total,BuildContext context) {
     return Container(
       width: double.maxFinite,
       margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -65,7 +64,7 @@ class AnalyticsScreen extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Color(0xFF6A5AE0).withOpacity(0.3),
+            color: Color(0xFF6A5AE0).withValues(alpha: 0.3),
             blurRadius: 10,
             offset: Offset(0, 6),
           )
@@ -74,7 +73,7 @@ class AnalyticsScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text("Total Spent",
+           Text(context.l10n.totalSpent,
               style: TextStyle(color: Colors.white70)),
           const SizedBox(height: 8),
           Text(
@@ -90,7 +89,6 @@ class AnalyticsScreen extends StatelessWidget {
     );
   }
 
-  // 📊 Pie Chart
   Widget _pieChart(Map<String, double> data) {
     final colors = [
       Color(0xFF6A5AE0),
@@ -119,7 +117,6 @@ class AnalyticsScreen extends StatelessWidget {
     );
   }
 
-  // 📌 Legend
   Widget _legend(Map<String, double> data) {
     final colors = [
       Color(0xFF6A5AE0),
@@ -128,7 +125,6 @@ class AnalyticsScreen extends StatelessWidget {
       Color(0xFFFFB300),
       Color(0xFFFF7043),
     ];
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Wrap(
@@ -158,7 +154,6 @@ class AnalyticsScreen extends StatelessWidget {
     );
   }
 
-  // 🔧 Helper: Group by category
   Map<String, double> _groupByCategory(List expenses) {
     final Map<String, double> data = {};
 

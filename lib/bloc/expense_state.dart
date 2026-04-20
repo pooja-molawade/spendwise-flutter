@@ -9,7 +9,7 @@ class ExpenseState {
   ExpenseState copyWith({List<Expense>? expenses, required String error}) {
     return ExpenseState(
       expenses: expenses ?? this.expenses,
-      error :error??this.error,
+      error :error,
     );
   }
 }
