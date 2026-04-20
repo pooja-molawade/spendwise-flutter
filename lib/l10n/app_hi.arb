@@ -28,7 +28,7 @@
   "language": "भाषा",
   "noDataAvailable": "कोई डेटा उपलब्ध नहीं",
   "spendingPercentage": "आपने {category} पर {percent}% खर्च किया",
-  "highSpendingToday": "आज अधिक खर्च ₹{todayTotal]",
+  "highSpendingToday": "आज अधिक खर्च ₹{todayTotal}",
   "last7DaysSpending": "पिछले 7 दिनों में ₹{lastWeekTotal} खर्च किए",
   "food": "खाना",
     "travel": "यात्रा",
