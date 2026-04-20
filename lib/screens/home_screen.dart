@@ -1,6 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:spendwise_flutter/screens/profile/analytics_screen.dart';
+import 'package:spendwise_flutter/screens/profile/profile_screen.dart';
 import '../bloc/expense_bloc.dart';
 import '../bloc/expense_state.dart';
 import '../bloc/load_expenses_event.dart';
@@ -26,48 +29,79 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xffF5F7FB),
-      appBar: AppBar(title: Text('💰 SpendWise ',style: TextStyle(color: Colors.white),),backgroundColor:Colors.teal,),
+      appBar: AppBar(
+        title: const Text(
+          'SpendWise',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+        ),
+        backgroundColor: const Color(0xFF6A5AE0),
+        elevation: 0,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.person,color: Colors.white,),
+            onPressed: () {
+              final bloc = context.read<ExpenseBloc>();
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => BlocProvider.value(
+                    value: bloc,
+                    child: const ProfileScreen(),
+                  ),
+                ),
+              );
+            },
+          ),
+        ],),
       body: SafeArea(
         child: BlocBuilder<ExpenseBloc, ExpenseState>(
           builder: (context, state) {
+            final expenses = state.expenses;
+
             final total = state.expenses.fold(
               0.0,
                   (sum, e) => sum + e.amount,
             );
+            final categorySummary = _groupByCategory(expenses);
+            final grouped = _groupByDate(expenses);
 
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [SizedBox(height: 20,),
+              children: [
+                SizedBox(height: 20,),
                 _balanceCard(total),
                 _sectionTitle("Spending Insights"),
                 _insightsSection(state.expenses),
-                _pieChart(state.expenses),
+                const SizedBox(height: 20),
+                _categoryChips(categorySummary),
+                const SizedBox(height: 10),
+                _analyticsCTA(context),
                 _sectionTitle("Recent Transactions"),
-                _recentTransactions(state.expenses),
+                Expanded(child: _transactionList(grouped)),
+                //_recentTransactions(state.expenses),
               ],
             );
           },
         ),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: const Color(0xFF6A5AE0),
         onPressed: () {
+          final bloc = context.read<ExpenseBloc>();
           showModalBottomSheet(
             context: context,
-            isScrollControlled: true,
-            builder: (bottomSheetContext) {
-              return BlocProvider.value(
-                value: context.read<ExpenseBloc>(),
-                child: const QuickAddSheet(),
-              );
-            },
+            builder: (_) => BlocProvider.value(
+              value: bloc,
+              child: const QuickAddSheet(),
+            ),
           );
         },
-        child: const Icon(Icons.add),
+        icon: const Icon(Icons.add,color: Colors.white,),
+        label: const Text("Add",style: TextStyle(color: Colors.white),),
       ),
     );
   }
 
-  // ================= BALANCE =================
   Widget _balanceCard(double total) {
     return Container(
       width: double.maxFinite,
@@ -76,8 +110,17 @@ class _HomeScreenState extends State<HomeScreen> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         gradient: const LinearGradient(
-          colors: [Colors.teal, Colors.tealAccent],
+          colors: [Color(0xFF6A5AE0), Color(0xFF8E7CFF)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Color(0xFF6A5AE0).withOpacity(0.3),
+            blurRadius: 12,
+            offset: Offset(0, 6),
+          )
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -98,7 +141,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // ================= TITLE =================
   Widget _sectionTitle(String title) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 20, 16, 10),
@@ -110,30 +152,77 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // ================= CHART =================
-  Widget _pieChart(List expenses) {
-    final Map<String, double> data = {};
-
-    for (var e in expenses) {
-      data[e.category] =
-          (data[e.category] ?? 0) + e.amount;
-    }
-
-    return Expanded(
-      child: PieChart(
-        PieChartData(
-          sections: data.entries.map((e) {
-            return PieChartSectionData(
-              value: e.value,
-              title: e.key,
-            );
-          }).toList(),
-        ),
+  Widget _categoryChips(Map<String, double> data) {
+    return SizedBox(
+      height: 40,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        children: data.entries.map((e) {
+          return Container(
+            margin: const EdgeInsets.only(right: 8),
+            padding:
+            const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: const Color(0xFFEDEBFF),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text("${e.key} ₹${e.value.toInt()}"),
+          );
+        }).toList(),
       ),
     );
   }
 
-  // ================= TRANSACTIONS =================
+  Widget _analyticsCTA(BuildContext context) {
+    return ListTile(
+      title: const Text("View Analytics"),
+      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+      onTap: () {
+        final bloc = context.read<ExpenseBloc>();
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => BlocProvider.value(
+              value: bloc,
+              child: const AnalyticsScreen(),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _transactionList(Map<String, List> grouped) {
+    return ListView(
+      shrinkWrap: true,
+      //physics: const NeverScrollableScrollPhysics(),
+      children: grouped.entries.map((entry) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Text(
+                entry.key,
+                style: const TextStyle(
+                    fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
+            ...entry.value.map((e) {
+              return ListTile(
+                title: Text(e.title),
+                subtitle: Text(e.category),
+                trailing: Text("₹${e.amount}"),
+              );
+            }),
+          ],
+        );
+      }).toList(),
+    );
+  }
+  
   Widget _recentTransactions(List expenses) {
     if (expenses.isEmpty) {
       return const Expanded(
@@ -223,5 +312,31 @@ class _HomeScreenState extends State<HomeScreen> {
         },
       ),
     );
+  }
+  Map<String, double> _groupByCategory(List expenses) {
+    final Map<String, double> data = {};
+    for (var e in expenses) {
+      data[e.category] =
+          (data[e.category] ?? 0) + e.amount;
+    }
+    return data;
+  }
+
+  Map<String, List> _groupByDate(List expenses) {
+    final Map<String, List> data = {};
+    for (var e in expenses) {
+      final now = DateTime.now();
+      final diff = now.difference(e.date).inDays;
+      String key;
+      if (diff == 0) {
+        key = "Today";
+      } else if (diff == 1) {
+        key = "Yesterday";
+      } else {
+        key = "${e.date.day}/${e.date.month}";
+      }
+      data.putIfAbsent(key, () => []).add(e);
+    }
+    return data;
   }
 }

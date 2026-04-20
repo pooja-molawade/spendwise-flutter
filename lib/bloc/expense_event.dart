@@ -10,6 +10,5 @@ class AddExpense extends ExpenseEvent {
 
 class DeleteExpense extends ExpenseEvent {
   final String id;
-
-  DeleteExpense(this.id);
+  DeleteExpense(this.id,);
 }

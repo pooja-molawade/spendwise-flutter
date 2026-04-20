@@ -1,3 +1,4 @@
 import 'expense_event.dart';
 
-class LoadExpenses extends ExpenseEvent {}
+class LoadExpenses extends ExpenseEvent {
+}
