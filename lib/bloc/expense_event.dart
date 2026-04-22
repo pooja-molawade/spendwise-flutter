@@ -12,3 +12,9 @@ class DeleteExpense extends ExpenseEvent {
   final String id;
   DeleteExpense(this.id,);
 }
+
+class FilterChanged extends ExpenseEvent {
+  final String filter;
+
+  FilterChanged(this.filter);
+}

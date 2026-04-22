@@ -39,8 +39,40 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
       try {
         await service.deleteExpense(event.id);
       } catch (e) {
-        emit(state.copyWith(error: "Failed to delete"));
+        emit(state.copyWith(error: "Failed to delete",));
       }
     });
+
+    on<FilterChanged>((event, emit) {
+      List<Expense>? filteredExpenses = _applyFilter(event.filter);
+
+      emit(state.copyWith(
+        expenses: filteredExpenses,
+        selectedFilter: event.filter, error: 'Failed to filter out.',
+      ));
+    });
+
+  }
+
+  List<Expense> _applyFilter(String filter) {
+    final now = DateTime.now();
+
+    switch (filter) {
+      case "Week":
+        return state.expenses.where((e) =>
+            e.date.isAfter(now.subtract(const Duration(days: 7)))).toList();
+
+      case "Month":
+        return state.expenses.where((e) =>
+        e.date.month == now.month &&
+            e.date.year == now.year).toList();
+
+      case "Year":
+        return state.expenses.where((e) =>
+        e.date.year == now.year).toList();
+
+      default:
+        return state.expenses;
+    }
   }
 }

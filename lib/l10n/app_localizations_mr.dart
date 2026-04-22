@@ -104,7 +104,7 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String last7DaysSpending(Object lastWeekTotal) {
-    return 'मागील 7 दिवसांत ₹$lastWeekTotal खर्च झाले';
+    return 'मागील 7 दिवसांत ₹ $lastWeekTotal खर्च झाले';
   }
 
   @override

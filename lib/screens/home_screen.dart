@@ -230,7 +230,6 @@ class _HomeScreenState extends State<HomeScreen> {
         itemCount: insights.length,
         itemBuilder: (_, i) {
           final insight = insights[i];
-
           return Container(
             width: 250,
             margin: const EdgeInsets.only(left: 16),

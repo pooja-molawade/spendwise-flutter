@@ -271,19 +271,19 @@ abstract class AppLocalizations {
   /// No description provided for @spendingPercentage.
   ///
   /// In en, this message translates to:
-  /// **'You spent \$percent% on \${category}'**
+  /// **'You spent {percent}% on {category}'**
   String spendingPercentage(Object category, Object percent);
 
   /// No description provided for @highSpendingToday.
   ///
   /// In en, this message translates to:
-  /// **'High spending today ₹ \${todayTotal}'**
+  /// **'High spending today ₹ {todayTotal}'**
   String highSpendingToday(Object todayTotal);
 
   /// No description provided for @last7DaysSpending.
   ///
   /// In en, this message translates to:
-  /// **'₹ \${lastWeekTotal} spent in last 7 days'**
+  /// **'₹ {lastWeekTotal} spent in last 7 days'**
   String last7DaysSpending(Object lastWeekTotal);
 
   /// No description provided for @food.

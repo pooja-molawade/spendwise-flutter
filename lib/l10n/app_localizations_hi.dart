@@ -95,17 +95,17 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String spendingPercentage(Object category, Object percent) {
-    return 'You spent $percent% on $category';
+    return 'आपने $category पर $percent% खर्च किया';
   }
 
   @override
   String highSpendingToday(Object todayTotal) {
-    return 'आज अधिक खर्च ₹\$todayTotal';
+    return 'आज अधिक खर्च ₹$todayTotal';
   }
 
   @override
   String last7DaysSpending(Object lastWeekTotal) {
-    return 'पिछले 7 दिनों में ₹\$lastWeekTotal खर्च किए';
+    return 'पिछले 7 दिनों में ₹$lastWeekTotal खर्च किए';
   }
 
   @override
